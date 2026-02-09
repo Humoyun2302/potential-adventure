@@ -1,0 +1,38 @@
+[build]
+  # Use the root Vite app (entry: index.html → src/main.tsx)
+  # Netlify will run this in the repository root
+  command = "npm run build"
+
+  # Vite build output directory (see vite.config.ts → build.outDir = 'build')
+  publish = "build"
+
+[build.environment]
+  # Compatible Node LTS for Vite + Supabase SDK
+  NODE_VERSION = "18"
+
+[[redirects]]
+  # SPA routing: send all paths to the Vite index.html
+  from = "/*"
+  to   = "/index.html"
+  status = 200
+
+[[headers]]
+  # Basic security headers for all routes
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  # Long-term caching for static assets (Vite output)
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Environment variables are set in the Netlify UI (DO NOT commit secrets)
+# Required:
+#   VITE_SUPABASE_URL
+#   VITE_SUPABASE_ANON_KEY
+
